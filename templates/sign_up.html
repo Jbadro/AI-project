@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow">
+                <div class="card-header card-header-custom">
+                    <h3 class="mb-0">Sign Up</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="email"
+                                name="email"
+                                placeholder="Enter email"
+                                required
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="firstName"
+                                name="firstName"
+                                placeholder="Enter first name"
+                                required
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label for="password1">Password</label>
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="password1"
+                                name="password1"
+                                placeholder="Enter password"
+                                required
+                            />
+                            <small class="form-text text-muted">Password must be at least 7 characters</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="password2">Confirm Password</label>
+                            <input
+                                type="password"
+                                class="form-control"
+                                id="password2"
+                                name="password2"
+                                placeholder="Confirm password"
+                                required
+                            />
+                        </div>
+                        <div class="form-group text-center mt-4">
+                            <button type="submit" class="btn btn-success-custom btn-lg">Sign Up</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <p class="mb-0">Already have an account? <a href="/login">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

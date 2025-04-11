@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+{% block title %}NutriTech - API Documentation{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header card-header-custom">
+                    <h4 class="mb-0">NutriTech API Documentation</h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        The NutriTech API allows developers to programmatically access our grocery recommendation system and user preferences.
+                    </p>
+                    
+                    <h5 class="mt-4">API Endpoints</h5>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">GET /api/recommendations</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Get personalized grocery recommendations based on user preferences.</p>
+                            
+                            <h6>Query Parameters</h6>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>Required</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>diet_type</code></td>
+                                        <td>string</td>
+                                        <td>Type of diet (e.g., "vegetarian", "keto")</td>
+                                        <td>No (uses user's preferences if not provided)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>calorie_target</code></td>
+                                        <td>integer</td>
+                                        <td>Daily calorie target</td>
+                                        <td>No (uses user's preferences if not provided)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>budget</code></td>
+                                        <td>float</td>
+                                        <td>Weekly budget in USD</td>
+                                        <td>No (uses user's preferences if not provided)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>allergies</code></td>
+                                        <td>string</td>
+                                        <td>Comma-separated allergies or restrictions</td>
+                                        <td>No (uses user's preferences if not provided)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6>Response</h6>
+                            <pre><code>{
+  "status": "success",
+  "parameters": {
+    "diet_type": "vegetarian",
+    "calorie_target": 2000,
+    "budget": 100,
+    "allergies": "peanuts, shellfish"
+  },
+  "recommendations": [
+    {
+      "id": 1,
+      "name": "Organic Bananas (bunch)",
+      "price": 2.99,
+      "calories": 105,
+      "protein": 1.3,
+      "carbs": 27.0,
+      "fat": 0.4,
+      "category": "fruit",
+      "store": "Walmart",
+      "diet_types": ["vegetarian", "vegan", "gluten-free", "low-fat"]
+    },
+    // Additional items...
+  ],
+  "summary": {
+    "total_price": 87.45,
+    "total_calories": 12500,
+    "total_protein": 450,
+    "total_carbs": 1200,
+    "total_fat": 500,
+    "item_count": 15
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">GET /api/products</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Get all available products or filter by criteria.</p>
+                            
+                            <h6>Query Parameters</h6>
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>Required</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>category</code></td>
+                                        <td>string</td>
+                                        <td>Filter by category (e.g., "fruit", "meat")</td>
+                                        <td>No</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>diet_type</code></td>
+                                        <td>string</td>
+                                        <td>Filter by diet type (e.g., "vegetarian", "keto")</td>
+                                        <td>No</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>min_price</code></td>
+                                        <td>float</td>
+                                        <td>Minimum price in USD</td>
+                                        <td>No</td>
+                                    </tr>
+                                    <tr>
+                                        <td><code>max_price</code></td>
+                                        <td>float</td>
+                                        <td>Maximum price in USD</td>
+                                        <td>No</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            
+                            <h6>Response</h6>
+                            <pre><code>{
+  "status": "success",
+  "count": 20,
+  "products": [
+    {
+      "id": 1,
+      "name": "Organic Bananas (bunch)",
+      "price": 2.99,
+      "calories": 105,
+      "protein": 1.3,
+      "carbs": 27.0,
+      "fat": 0.4,
+      "category": "fruit",
+      "store": "Walmart",
+      "diet_types": ["vegetarian", "vegan", "gluten-free", "low-fat"]
+    },
+    // Additional products...
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">GET /api/preferences</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Get the current user's preferences.</p>
+                            
+                            <h6>Response</h6>
+                            <pre><code>{
+  "status": "success",
+  "preferences": {
+    "diet_type": "vegetarian",
+    "calorie_target": 2000,
+    "budget": 100,
+    "allergies": "peanuts, shellfish",
+    "last_updated": "2025-03-01T12:34:56.789Z"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">POST /api/preferences</h5>
+                        </div>
+                        <div class="card-body">
+                            <p>Update the current user's preferences.</p>
+                            
+                            <h6>Request Body</h6>
+                            <pre><code>{
+  "diet_type": "keto",
+  "calorie_target": 1800,
+  "budget": 120,
+  "allergies": "dairy, gluten"
+}</code></pre>
+                            
+                            <h6>Response</h6>
+                            <pre><code>{
+  "status": "success",
+  "message": "Preferences updated successfully.",
+  "preferences": {
+    "diet_type": "keto",
+    "calorie_target": 1800,
+    "budget": 120,
+    "allergies": "dairy, gluten",
+    "last_updated": "2025-03-10T15:45:23.456Z"
+  }
+}</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mt-4">Authentication</h5>
+                    <p>All API endpoints require authentication. Users must be logged in to access the API.</p>
+                    
+                    <h5 class="mt-4">Rate Limiting</h5>
+                    <p>API requests are limited to 100 requests per hour per user.</p>
+                    
+                    <h5 class="mt-4">Error Handling</h5>
+                    <p>The API returns appropriate HTTP status codes along with JSON error messages:</p>
+                    <pre><code>{
+  "status": "error",
+  "message": "Description of the error"
+}</code></pre>
+                    
+                    <h5 class="mt-4">Common Status Codes</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Status Code</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>200 OK</td>
+                                <td>The request was successful.</td>
+                            </tr>
+                            <tr>
+                                <td>400 Bad Request</td>
+                                <td>The request was invalid or cannot be served. This includes validation errors.</td>
+                            </tr>
+                            <tr>
+                                <td>401 Unauthorized</td>
+                                <td>Authentication is required and has failed or has not been provided.</td>
+                            </tr>
+                            <tr>
+                                <td>404 Not Found</td>
+                                <td>The requested resource could not be found.</td>
+                            </tr>
+                            <tr>
+                                <td>500 Internal Server Error</td>
+                                <td>An error occurred on the server.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h5 class="mt-4">Sample Code</h5>
+                    <ul class="nav nav-tabs" id="codeTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="python-tab" data-toggle="tab" href="#python" role="tab" aria-controls="python" aria-selected="true">Python</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="javascript-tab" data-toggle="tab" href="#javascript" role="tab" aria-controls="javascript" aria-selected="false">JavaScript</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="codeTabContent">
+                        <div class="tab-pane fade show active" id="python" role="tabpanel" aria-labelledby="python-tab">
+                            <pre><code>import requests
+
+# Login and get session cookie (not shown)
+session = requests.Session()
+
+# Get recommendations
+response = session.get(
+    'http://example.com/api/recommendations',
+    params={
+        'diet_type': 'vegetarian',
+        'calorie_target': 2000,
+        'budget': 100
+    }
+)
+
+if response.status_code == 200:
+    data = response.json()
+    recommendations = data['recommendations']
+    print(f"Found {len(recommendations)} recommendations!")
+    
+    # Display total nutrition
+    summary = data['summary']
+    print(f"Total calories: {summary['total_calories']}")
+    print(f"Total protein: {summary['total_protein']}g")
+    print(f"Total cost: ${summary['total_price']:.2f}")
+else:
+    print(f"Error: {response.status_code}")
+    print(response.json())</code></pre>
+                        </div>
+                        <div class="tab-pane fade" id="javascript" role="tabpanel" aria-labelledby="javascript-tab">
+                            <pre><code>// Get recommendations
+fetch('/api/recommendations?diet_type=vegetarian&calorie_target=2000&budget=100', {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  credentials: 'same-origin'
+})
+.then(response => {
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+  return response.json();
+})
+.then(data => {
+  console.log(`Found ${data.recommendations.length} recommendations!`);
+  
+  // Display total nutrition
+  const summary = data.summary;
+  console.log(`Total calories: ${summary.total_calories}`);
+  console.log(`Total protein: ${summary.total_protein}g`);
+  console.log(`Total cost: $${summary.total_price.toFixed(2)}`);
+})
+.catch(error => {
+  console.error('Error:', error);
+});</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}NutriTech - Home{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12 text-center mb-5">
+            <h1 class="display-4">Welcome to NutriTech</h1>
+            <p class="lead">Your personalized nutrition and grocery planning assistant</p>
+        </div>
+    </div>
+    
+    <div class="row mb-5">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-header card-header-custom">
+                    <h4 class="mb-0">How NutriTech Works</h4>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li class="mb-3">
+                            <strong>Set your preferences</strong>
+                            <p>Tell us about your dietary needs, restrictions, and budget.</p>
+                        </li>
+                        <li class="mb-3">
+                            <strong>Get personalized grocery lists</strong>
+                            <p>Our system analyzes your preferences and generates a customized shopping list.</p>
+                        </li>
+                        <li class="mb-3">
+                            <strong>Save time and money</strong>
+                            <p>Enjoy nutritious meals that fit your budget without the hassle of meal planning.</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fa fa-cutlery fa-3x mb-3 text-success"></i>
+                    <h5 class="card-title">Personalized Nutrition</h5>
+                    <p class="card-text">Get meal recommendations tailored to your specific dietary needs and preferences.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fa fa-money fa-3x mb-3 text-success"></i>
+                    <h5 class="card-title">Budget-Friendly</h5>
+                    <p class="card-text">Find the best deals that match your nutritional needs within your specified budget.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fa fa-clock-o fa-3x mb-3 text-success"></i>
+                    <h5 class="card-title">Time-Saving</h5>
+                    <p class="card-text">Eliminate the guesswork and time spent on planning meals and shopping lists.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if not user.is_authenticated %}
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3 text-center">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Ready to get started?</h5>
+                    <div class="mt-4">
+                        <a href="/sign-up" class="btn btn-success-custom btn-lg mr-3">Sign Up</a>
+                        <a href="/login" class="btn btn-outline-secondary btn-lg">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3 text-center">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Ready to plan your meals?</h5>
+                    <div class="mt-4">
+                        <a href="/grocery-list" class="btn btn-success-custom btn-lg">Generate Grocery List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

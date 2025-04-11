@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}NutriTech - Grocery List{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Your Personalized Grocery List</h4>
+                    <button class="btn btn-sm btn-outline-light" onclick="window.print();">
+                        <i class="fa fa-print"></i> Print
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% if grocery_items %}
+                        <div class="alert alert-success">
+                            <p><strong>Perfect match!</strong> This grocery list meets your nutritional needs and budget constraints.</p>
+                            <ul class="mb-0">
+                                <li>Diet type: <strong>{{ user.preferences.diet_type }}</strong></li>
+                                <li>Weekly budget: <strong>${{ user.preferences.budget }}</strong></li>
+                                <li>Daily calorie target: <strong>{{ user.preferences.calorie_target }} calories</strong></li>
+                            </ul>
+                        </div>
+                        
+                        <h5 class="mb-3">Grocery Items</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Price</th>
+                                        <th>Calories</th>
+                                        <th>Protein</th>
+                                        <th>Carbs</th>
+                                        <th>Fat</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in grocery_items %}
+                                    <tr>
+                                        <td><a href="{{ url_for('views.product_detail', product_id=item.id) }}">{{ item.name }}</a></td>
+                                        <td>${{ "%.2f"|format(item.price) }}</td>
+                                        <td>{{ item.calories }}</td>
+                                        <td>{{ item.protein }}g</td>
+                                        <td>{{ item.carbs }}g</td>
+                                        <td>{{ item.fat }}g</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-success">
+                                        <th>Total</th>
+                                        <th>${{ "%.2f"|format(total_price) }}</th>
+                                        <th>{{ total_calories }} cal</th>
+                                        <th colspan="3"></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card bg-light mb-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Budget Analysis</h5>
+                                            <p class="card-text">This grocery list will cost <strong>${{ "%.2f"|format(total_price) }}</strong>, which is {{ "%.1f"|format((total_price / user.preferences.budget) * 100) }}% of your weekly budget of ${{ user.preferences.budget }}.</p>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ (total_price / user.preferences.budget) * 100 }}%" aria-valuenow="{{ (total_price / user.preferences.budget) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card bg-light mb-3">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Nutrition Summary</h5>
+                                            <p class="card-text">This plan provides approximately <strong>{{ total_calories }}</strong> calories per day.</p>
+                                            <div class="progress mb-2">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ (total_calories / user.preferences.calorie_target) * 100 }}%" aria-valuenow="{{ (total_calories / user.preferences.calorie_target) * 100 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <small class="text-muted">Based on your daily target of {{ user.preferences.calorie_target }} calories</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <form method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-outline-primary mr-2">
+                                    <i class="fa fa-refresh"></i> Regenerate List
+                                </button>
+                            </form>
+                            <a href="#" class="btn btn-success-custom">
+                                <i class="fa fa-shopping-cart"></i> Order Online
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <p>We couldn't generate a grocery list based on your current preferences. Please check your dietary and budget settings.</p>
+                            <a href="/set-preferences" class="btn btn-primary mt-2">Update Preferences</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header card-header-custom">
+                    <h4 class="mb-0">Meal Planning Suggestions</h4>
+                </div>
+                <div class="card-body">
+                    <p>Here are some meal ideas you can prepare with the items on your grocery list:</p>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Breakfast</h5>
+                                    <ul class="list-unstyled">
+                                        <li>Spinach and Egg Omelette</li>
+                                        <li>Overnight Oats with Berries</li>
+                                        <li>Greek Yogurt with Granola</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Lunch</h5>
+                                    <ul class="list-unstyled">
+                                        <li>Grilled Chicken Salad</li>
+                                        <li>Quinoa Bowl with Roasted Vegetables</li>
+                                        <li>Turkey Wrap with Avocado</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Dinner</h5>
+                                    <ul class="list-unstyled">
+                                        <li>Baked Salmon with Brown Rice</li>
+                                        <li>Veggie Stir-Fry with Tofu</li>
+                                        <li>Spaghetti with Turkey Meatballs</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 text-center">
+                        <a href="#" class="btn btn-outline-success">
+                            <i class="fa fa-file-text-o"></i> View Full Meal Plan
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

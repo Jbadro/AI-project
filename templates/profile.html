@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}NutriTech - Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header card-header-custom">
+                    <h4 class="mb-0">Your Profile</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-4 mb-md-0">
+                            <i class="fa fa-user-circle-o fa-5x text-secondary mb-3"></i>
+                            <h5>{{ user.first_name }}</h5>
+                            <p class="text-muted">{{ user.email }}</p>
+                            <p class="text-muted small">Member since: {{ user.date_created.strftime('%B %d, %Y') }}</p>
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="mb-3">Your Nutrition & Diet Preferences</h5>
+                            {% if preferences %}
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row">Diet Type:</th>
+                                                <td>{{ preferences.diet_type }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Daily Calorie Target:</th>
+                                                <td>{{ preferences.calorie_target }} calories</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Weekly Budget:</th>
+                                                <td>${{ preferences.budget }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Allergies/Restrictions:</th>
+                                                <td>{{ preferences.allergies }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row">Last Updated:</th>
+                                                <td>{{ preferences.date_updated.strftime('%B %d, %Y') }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <a href="/set-preferences" class="btn btn-primary">Update Preferences</a>
+                            {% else %}
+                                <div class="alert alert-info">
+                                    <p>You haven't set your nutrition preferences yet!</p>
+                                    <a href="/set-preferences" class="btn btn-primary">Set Preferences</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header card-header-custom">
+                    <h4 class="mb-0">Recent Activity</h4>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Generated Grocery List</h5>
+                                <small class="text-muted">3 days ago</small>
+                            </div>
+                            <p class="mb-1">You generated a grocery list with 15 items totaling $67.42.</p>
+                        </div>
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Updated Dietary Preferences</h5>
+                                <small class="text-muted">1 week ago</small>
+                            </div>
+                            <p class="mb-1">You updated your dietary preferences to include gluten-free options.</p>
+                        </div>
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">Account Created</h5>
+                                <small class="text-muted">{{ user.date_created.strftime('%B %d, %Y') }}</small>
+                            </div>
+                            <p class="mb-1">Welcome to NutriTech! You created your account.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

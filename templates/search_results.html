@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}NutriTech - Search Results{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header card-header-custom">
+                    <h4 class="mb-0">Search Results{% if query %} for "{{ query }}"{% endif %}</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('views.search_products') }}" method="GET" class="mb-4">
+                        <div class="form-row">
+                            <div class="col-md-6 mb-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="query" placeholder="Search for items..." value="{{ query }}">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-success-custom" type="submit">
+                                            <i class="fa fa-search"></i> Search
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <select class="form-control" name="category">
+                                    <option value="">All Categories</option>
+                                    <option value="fruit" {% if category == 'fruit' %}selected{% endif %}>Fruits</option>
+                                    <option value="vegetable" {% if category == 'vegetable' %}selected{% endif %}>Vegetables</option>
+                                    <option value="meat" {% if category == 'meat' %}selected{% endif %}>Meat</option>
+                                    <option value="seafood" {% if category == 'seafood' %}selected{% endif %}>Seafood</option>
+                                    <option value="dairy" {% if category == 'dairy' %}selected{% endif %}>Dairy</option>
+                                    <option value="grain" {% if category == 'grain' %}selected{% endif %}>Grains</option>
+                                    <option value="canned_goods" {% if category == 'canned_goods' %}selected{% endif %}>Canned Goods</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <button type="submit" class="btn btn-primary btn-block">Filter</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    {% if results %}
+                        <div class="alert alert-success">
+                            <strong>{{ results|length }}</strong> items found.
+                        </div>
+                        
+                        <div class="row">
+                            {% for item in results %}
+                                <div class="col-md-4 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ item.name }}</h5>
+                                            <p class="card-text">
+                                                <strong>${{ "%.2f"|format(item.price.amount) }}</strong>
+                                            </p>
+                                            <div class="small mb-2">
+                                                {% for attr in item.dietaryAttributes %}
+                                                    <span class="badge badge-success mr-1">{{ attr }}</span>
+                                                {% endfor %}
+                                            </div>
+                                            <p class="card-text small">
+                                                <i class="fa fa-fire text-danger"></i> {{ item.nutritionFacts.calories }} cal
+                                                <i class="fa fa-cutlery text-primary ml-2"></i> {{ item.nutritionFacts.protein }}g protein
+                                            </p>
+                                            <div class="d-flex justify-content-between mt-3">
+                                                <a href="{{ url_for('views.product_detail', product_id=item.id) }}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fa fa-info-circle"></i> Details
+                                                </a>
+                                                <button class="btn btn-sm btn-success-custom">
+                                                    <i class="fa fa-plus"></i> Add to List
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <small class="text-muted">
+                                                {% if item.inStock %}
+                                                    <i class="fa fa-check-circle text-success"></i> In Stock
+                                                {% else %}
+                                                    <i class="fa fa-times-circle text-danger"></i> Out of Stock
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% elif query %}
+                        <div class="alert alert-warning">
+                            <p>No items found matching your search criteria.</p>
+                            <p>Try modifying your search or browse our categories.</p>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-12 text-center">
+                                <h5>Popular Categories</h5>
+                                <div class="mt-3">
+                                    <a href="{{ url_for('views.search_products', category='fruit') }}" class="btn btn-outline-success m-1">Fruits</a>
+                                    <a href="{{ url_for('views.search_products', category='vegetable') }}" class="btn btn-outline-success m-1">Vegetables</a>
+                                    <a href="{{ url_for('views.search_products', category='meat') }}" class="btn btn-outline-success m-1">Meat</a>
+                                    <a href="{{ url_for('views.search_products', category='dairy') }}" class="btn btn-outline-success m-1">Dairy</a>
+                                    <a href="{{ url_for('views.search_products', category='grain') }}" class="btn btn-outline-success m-1">Grains</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <p>Enter a search term to find grocery items.</p>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-12 text-center">
+                                <h5>Popular Categories</h5>
+                                <div class="mt-3">
+                                    <a href="{{ url_for('views.search_products', category='fruit') }}" class="btn btn-outline-success m-1">Fruits</a>
+                                    <a href="{{ url_for('views.search_products', category='vegetable') }}" class="btn btn-outline-success m-1">Vegetables</a>
+                                    <a href="{{ url_for('views.search_products', category='meat') }}" class="btn btn-outline-success m-1">Meat</a>
+                                    <a href="{{ url_for('views.search_products', category='dairy') }}" class="btn btn-outline-success m-1">Dairy</a>
+                                    <a href="{{ url_for('views.search_products', category='grain') }}" class="btn btn-outline-success m-1">Grains</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

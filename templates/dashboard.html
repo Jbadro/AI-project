@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+{% block title %}NutriTech - Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header card-header-custom">
+                    <h4 class="mb-0">Your Nutrition Dashboard</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Daily Calories</h5>
+                                    <div class="display-4 mb-2">{{ calorie_stats.current }}</div>
+                                    <p class="card-text">
+                                        {% if calorie_stats.current <= calorie_stats.target %}
+                                            <span class="text-success">
+                                                <i class="fa fa-check-circle"></i> On Track
+                                            </span>
+                                        {% else %}
+                                            <span class="text-danger">
+                                                <i class="fa fa-exclamation-circle"></i> Over Target
+                                            </span>
+                                        {% endif %}
+                                    </p>
+                                    <div class="progress mt-2">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {{ (calorie_stats.current / calorie_stats.target) * 100 if calorie_stats.current <= calorie_stats.target else 100 }}%" 
+                                             aria-valuenow="{{ calorie_stats.current }}" aria-valuemin="0" aria-valuemax="{{ calorie_stats.target }}"></div>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">Target: {{ calorie_stats.target }} calories</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Weekly Budget</h5>
+                                    <div class="display-4 mb-2">${{ "%.2f"|format(budget_stats.spent) }}</div>
+                                    <p class="card-text">
+                                        {% if budget_stats.spent <= budget_stats.total %}
+                                            <span class="text-success">
+                                                <i class="fa fa-check-circle"></i> Under Budget
+                                            </span>
+                                        {% else %}
+                                            <span class="text-danger">
+                                                <i class="fa fa-exclamation-circle"></i> Over Budget
+                                            </span>
+                                        {% endif %}
+                                    </p>
+                                    <div class="progress mt-2">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {{ (budget_stats.spent / budget_stats.total) * 100 if budget_stats.spent <= budget_stats.total else 100 }}%" 
+                                             aria-valuenow="{{ budget_stats.spent }}" aria-valuemin="0" aria-valuemax="{{ budget_stats.total }}"></div>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">Budget: ${{ "%.2f"|format(budget_stats.total) }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Protein Intake</h5>
+                                    <div class="display-4 mb-2">{{ macro_stats.protein }}g</div>
+                                    <p class="card-text">
+                                        {% if macro_stats.protein >= macro_stats.protein_target %}
+                                            <span class="text-success">
+                                                <i class="fa fa-check-circle"></i> Target Met
+                                            </span>
+                                        {% else %}
+                                            <span class="text-warning">
+                                                <i class="fa fa-exclamation-circle"></i> Below Target
+                                            </span>
+                                        {% endif %}
+                                    </p>
+                                    <div class="progress mt-2">
+                                        <div class="progress-bar bg-info" role="progressbar" 
+                                             style="width: {{ (macro_stats.protein / macro_stats.protein_target) * 100 if macro_stats.protein <= macro_stats.protein_target else 100 }}%" 
+                                             aria-valuenow="{{ macro_stats.protein }}" aria-valuemin="0" aria-valuemax="{{ macro_stats.protein_target }}"></div>
+                                    </div>
+                                    <small class="text-muted mt-2 d-block">Target: {{ macro_stats.protein_target }}g protein</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Macronutrient Distribution</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="macroChart" style="height: 300px;">
+                                        <canvas id="macronutrientChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <div class="small text-muted">Protein</div>
+                                            <div>{{ macro_stats.protein }}g</div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="small text-muted">Carbs</div>
+                                            <div>{{ macro_stats.carbs }}g</div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="small text-muted">Fat</div>
+                                            <div>{{ macro_stats.fat }}g</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Budget Allocation</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div id="budgetChart" style="height: 300px;">
+                                        <canvas id="budgetAllocationChart"></canvas>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-white">
+                                    <div class="row text-center">
+                                        <div class="col-4">
+                                            <div class="small text-muted">Protein Foods</div>
+                                            <div>${{ "%.2f"|format(category_stats.protein_foods) }}</div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="small text-muted">Fruits & Veggies</div>
+                                            <div>${{ "%.2f"|format(category_stats.produce) }}</div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="small text-muted">Other</div>
+                                            <div>${{ "%.2f"|format(category_stats.other) }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Dietary Compliance</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Diet Type</th>
+                                                    <th>Compliance</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>{{ dietary_compliance.diet_type }}</td>
+                                                    <td>
+                                                        <div class="progress">
+                                                            <div class="progress-bar bg-success" role="progressbar" 
+                                                                style="width: {{ dietary_compliance.compliance_percentage }}%" 
+                                                                aria-valuenow="{{ dietary_compliance.compliance_percentage }}" 
+                                                                aria-valuemin="0" aria-valuemax="100">
+                                                                {{ dietary_compliance.compliance_percentage }}%
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {% if dietary_compliance.compliance_percentage >= 90 %}
+                                                            <span class="badge badge-success">Excellent</span>
+                                                        {% elif dietary_compliance.compliance_percentage >= 75 %}
+                                                            <span class="badge badge-info">Good</span>
+                                                        {% elif dietary_compliance.compliance_percentage >= 50 %}
+                                                            <span class="badge badge-warning">Fair</span>
+                                                        {% else %}
+                                                            <span class="badge badge-danger">Poor</span>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                                {% if dietary_compliance.allergies_avoided %}
+                                                <tr>
+                                                    <td>Allergy Avoidance</td>
+                                                    <td>
+                                                        <div class="progress">
+                                                            <div class="progress-bar bg-info" role="progressbar" 
+                                                                style="width: 100%" 
+                                                                aria-valuenow="100" 
+                                                                aria-valuemin="0" aria-valuemax="100">
+                                                                100%
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge badge-success">All Avoided</span>
+                                                    </td>
+                                                </tr>
+                                                {% endif %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header card-header-custom">
+                    <h4 class="mb-0">Nutrition Recommendations</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h5><i class="fa fa-lightbulb-o"></i> Personalized Recommendations</h5>
+                        <p>Based on your nutrition profile and grocery list, here are some suggestions to improve your diet:</p>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        {% for rec in recommendations %}
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ rec.title }}</h5>
+                                        <p class="card-text">{{ rec.description }}</p>
+                                    </div>
+                                    <div class="card-footer bg-white">
+                                        <a href="#" class="btn btn-sm btn-outline-primary">Learn More</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Macronutrient Distribution Chart
+    var macroCtx = document.getElementById('macronutrientChart').getContext('2d');
+    var macroChart = new Chart(macroCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Protein', 'Carbs', 'Fat'],
+            datasets: [{
+                data: [{{ macro_stats.protein }}, {{ macro_stats.carbs }}, {{ macro_stats.fat }}],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(255, 99, 132, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                position: 'bottom'
+            }
+        }
+    });
+    
+    // Budget Allocation Chart
+    var budgetCtx = document.getElementById('budgetAllocationChart').getContext('2d');
+    var budgetChart = new Chart(budgetCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Protein Foods', 'Fruits & Vegetables', 'Other'],
+            datasets: [{
+                data: [{{ category_stats.protein_foods }}, {{ category_stats.produce }}, {{ category_stats.other }}],
+                backgroundColor: [
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(255, 159, 64, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                position: 'bottom'
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

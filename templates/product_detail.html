@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block title %}NutriTech - Product Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-light">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/grocery-list">Grocery List</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Product Detail</li>
+                </ol>
+            </nav>
+            
+            <div class="card shadow-sm mb-4">
+                <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Product Details</h4>
+                </div>
+                <div class="card-body">
+                    {% if product %}
+                        <div class="row">
+                            <div class="col-md-4 text-center mb-4">
+                                <div class="bg-light rounded p-3 mb-3 d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="fa fa-shopping-basket fa-5x text-secondary"></i>
+                                </div>
+                                <h5>${{ "%.2f"|format(product.price.amount) }}</h5>
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-success-custom">
+                                        <i class="fa fa-plus"></i> Add to List
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <h3>{{ product.name }}</h3>
+                                <div class="mb-3">
+                                    <span class="badge badge-light mr-1">{{ product.category|title }}</span>
+                                    {% for attr in product.dietaryAttributes %}
+                                        <span class="badge badge-success mr-1">{{ attr }}</span>
+                                    {% endfor %}
+                                </div>
+                                
+                                <h5 class="mt-4">Nutrition Facts</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <th>Calories</th>
+                                                <td>{{ product.nutritionFacts.calories }}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Protein</th>
+                                                <td>{{ product.nutritionFacts.protein }}g</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Carbohydrates</th>
+                                                <td>{{ product.nutritionFacts.carbohydrates }}g</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Fat</th>
+                                                <td>{{ product.nutritionFacts.fat }}g</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Serving Size</th>
+                                                <td>{{ product.nutritionFacts.servingSize }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                {% if product.inStock %}
+                                    <div class="alert alert-success">
+                                        <i class="fa fa-check-circle"></i> In Stock ({{ product.quantity }} available)
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-danger">
+                                        <i class="fa fa-times-circle"></i> Out of Stock
+                                    </div>
+                                {% endif %}
+                                
+                                <h5 class="mt-4">Customer Rating</h5>
+                                <div class="mb-3">
+                                    {% for i in range(5) %}
+                                        {% if i < product.customerRating|int %}
+                                            <i class="fa fa-star text-warning"></i>
+                                        {% elif (product.customerRating - i)|round(1) >= 0.5 %}
+                                            <i class="fa fa-star-half-o text-warning"></i>
+                                        {% else %}
+                                            <i class="fa fa-star-o text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <span class="ml-2">{{ product.customerRating }} / 5</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <h5>Price History</h5>
+                                <div id="priceChart" style="height: 250px;">
+                                    <div class="d-flex justify-content-center align-items-center h-100">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="sr-only">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <h5>Store Availability</h5>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Store</th>
+                                                <th>Distance</th>
+                                                <th>Availability</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for store in stores %}
+                                                <tr>
+                                                    <td>
+                                                        <strong>{{ store.name }}</strong><br>
+                                                        <small class="text-muted">{{ store.address }}</small>
+                                                    </td>
+                                                    <td>{{ store.distance }} miles</td>
+                                                    <td>
+                                                        {% if store.inStock %}
+                                                            <span class="badge badge-success">In Stock ({{ store.quantity }})</span>
+                                                        {% else %}
+                                                            <span class="badge badge-danger">Out of Stock</span>
+                                                        {% endif %}
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <a href="/grocery-list" class="btn btn-primary">
+                                <i class="fa fa-arrow-left"></i> Back to Grocery List
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <p>Product not found or details unavailable.</p>
+                            <a href="/grocery-list" class="btn btn-primary mt-2">Back to Grocery List</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Simulated chart data - in a real app, this would come from the API
+    const priceData = {{ price_history|tojson }};
+    
+    if (priceData && priceData.length) {
+        // This is just a placeholder - in a real app, you'd use a chart library
+        // like Chart.js to render the actual chart
+        const chartContainer = document.getElementById('priceChart');
+        chartContainer.innerHTML = '';
+        
+        const chartContent = document.createElement('div');
+        chartContent.classList.add('p-3', 'bg-light', 'rounded');
+        chartContent.innerHTML = '<p class="text-center">Price history chart would be displayed here using Chart.js</p>';
+        
+        chartContainer.appendChild(chartContent);
+    }
+});
+</script>
+{% endblock %}
